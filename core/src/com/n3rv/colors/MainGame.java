@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 public class MainGame extends Game {
 
+    private static final int INITIAL_SPEED = 65;
+
     public SpriteBatch batch;
     public BitmapFont font_text;
     public BitmapFont font_number;
@@ -30,7 +32,7 @@ public class MainGame extends Game {
     public void create() {
         batch = new SpriteBatch();
 
-        setSpeed(30);
+        setSpeed(INITIAL_SPEED);
         setPoints(0);
 
         loadFonts();
@@ -58,7 +60,7 @@ public class MainGame extends Game {
 
     private void increaseSpeed(){
 
-        speed = speed + (float)(Math.log(points*1.5)/Math.log(2));
+        speed = speed + (float)(Math.log(points*1.75)/Math.log(2));
     }
 
     private void setLabelStyles() {
@@ -126,6 +128,7 @@ public class MainGame extends Game {
 
     public void setPoints(Integer l) {
         points = l;
+        setSpeed(INITIAL_SPEED);
     }
 
     public void addPoints(Integer x) {

@@ -694,6 +694,7 @@ public class MenuScreen implements Screen {
                     removeHighscoreNumber();
                     removeHighscoreText();
                     removeReloadButton();
+                    changeScorePosition(game.state);
                 }
             });
             reloadButton.setTransform(true);
