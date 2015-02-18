@@ -9,11 +9,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.assets.AssetManager;
 
 public class MainGame extends Game {
 
     private static final int INITIAL_SPEED = 65;
-
+    
+    public AssetManager assetManager;
     public SpriteBatch batch;
     public BitmapFont font_text;
     public BitmapFont font_number;
@@ -30,6 +32,7 @@ public class MainGame extends Game {
     private float speed = 0;
 
     public void create() {
+        assetManager = new AssetManager();
         batch = new SpriteBatch();
 
         setSpeed(INITIAL_SPEED);
