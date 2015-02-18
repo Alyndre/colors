@@ -180,7 +180,7 @@ public class ProgressCircle extends Image {
 
     }
 
-    // @Override
+    //@Override
     public void draw(SpriteBatch batch, float parentAlpha) {
         //super.draw(batch, parentAlpha);
 

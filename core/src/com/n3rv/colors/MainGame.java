@@ -14,7 +14,12 @@ import com.badlogic.gdx.assets.AssetManager;
 public class MainGame extends Game {
 
     private static final int INITIAL_SPEED = 65;
-    
+    public final static float VIRTUAL_WIDTH = 1080;
+    public final static float VIRTUAL_HEIGHT = 1920;
+    public static int REAL_WIDTH;
+    public static int REAL_HEIGHT;
+    public final static int NUM_OF_COLORS = 12;
+
     public AssetManager assetManager;
     public SpriteBatch batch;
     public BitmapFont font_text;
@@ -41,6 +46,9 @@ public class MainGame extends Game {
         loadFonts();
         setLabelStyles();
 
+        REAL_WIDTH = Gdx.graphics.getWidth();
+        REAL_HEIGHT = Gdx.graphics.getHeight();
+
         // Create (or retrieve existing) preferences file
         prefs = Gdx.app.getPreferences("Colors");
 
@@ -49,7 +57,7 @@ public class MainGame extends Game {
             prefs.putInteger("HighScore", 0);
         }
 
-        this.setScreen(new MenuScreen(this));
+        this.setScreen(new SplashScreen(this));
 
     }
 
