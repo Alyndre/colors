@@ -78,8 +78,8 @@ public class MenuScreen implements Screen {
         game = gam;
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1080, 1920);
-        ExtendViewport stagevp = new ExtendViewport(1080, 1920, camera);
+        camera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        ExtendViewport stagevp = new ExtendViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
 
         stage = new Stage(stagevp);
         stage.clear();
