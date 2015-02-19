@@ -1,3 +1,4 @@
 https://github.com/libgdx/libgdx/wiki/Managing-your-assets
 
-Texture.setFilter(TextureFilter.Linear, TextureFilter.Linear)
+Texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
+http://www.badlogicgames.com/wordpress/?p=1403
