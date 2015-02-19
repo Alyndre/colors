@@ -1,1 +1,3 @@
 https://github.com/libgdx/libgdx/wiki/Managing-your-assets
+
+Texture.setFilter(TextureFilter.Linear, TextureFilter.Linear)
