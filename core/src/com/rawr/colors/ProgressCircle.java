@@ -1,5 +1,6 @@
 package com.rawr.colors;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
@@ -33,22 +34,33 @@ public class ProgressCircle extends Image {
 
     IntersectAt intersectAt;
 
-    public ProgressCircle(TextureRegion region, PolygonSpriteBatch polyBatch) {
+    float real_w;
+    float real_h;
+
+    public ProgressCircle(TextureRegion region, PolygonSpriteBatch polyBatch, float width, float height) {
         super(region);
 
         this.texture = region;
         this.polyBatch = polyBatch;
 
-        center = new Vector2(this.getWidth() / 2, this.getHeight() / 2);
-        centerTop = new Vector2(this.getWidth() / 2, this.getHeight());
-        leftTop = new Vector2(0, this.getHeight());
-        leftBottom = new Vector2(0, 0);
-        rightBottom = new Vector2(this.getWidth(), 0);
-        rightTop = new Vector2(this.getWidth(), this.getHeight());
-        progressPoint = new Vector2(this.getWidth() / 2, this.getHeight() / 2);
+        real_w = this.getWidth();
+        real_h = this.getHeight();
+        this.setWidth(width);
+        this.setHeight(height);
+
+        calcVectors();
 
         setPercentage(0);
+    }
 
+    public void calcVectors(){
+        center = new Vector2(real_w / 2, real_h / 2);
+        centerTop = new Vector2(real_w / 2, real_h);
+        leftTop = new Vector2(0, real_w);
+        leftBottom = new Vector2(0, 0);
+        rightBottom = new Vector2(real_w, 0);
+        rightTop = new Vector2(real_w, real_h);
+        progressPoint = new Vector2(real_w / 2, real_h / 2);
     }
 
     private Vector2 IntersectPoint(Vector2 line) {
@@ -93,7 +105,7 @@ public class ProgressCircle extends Image {
         float angle = convertToRadians(90); //percent = 0 => angle = -90
         angle -= convertToRadians(percent * 360 / 100);
 
-        float len = this.getWidth() > this.getHeight() ? this.getWidth() : this.getHeight();
+        float len = real_w > real_h ? real_w : real_h;
         float dy = (float) (Math.sin(angle) * len);
         float dx = (float) (Math.cos(angle) * len);
         Vector2 line = new Vector2(center.x + dx, center.y + dy);
@@ -101,7 +113,7 @@ public class ProgressCircle extends Image {
         Vector2 v = IntersectPoint(line);
 
         if (intersectAt == IntersectAt.TOP) {
-            if (v.x >= this.getWidth() / 2)
+            if (v.x >= real_w / 2)
             {
                 fv = new float[]{
                         center.x,
@@ -180,8 +192,8 @@ public class ProgressCircle extends Image {
 
     }
 
-    //@Override
-    public void draw(SpriteBatch batch, float parentAlpha) {
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
         //super.draw(batch, parentAlpha);
 
         if (fv == null) return;
@@ -205,15 +217,15 @@ public class ProgressCircle extends Image {
         poly.setRotation(this.getRotation());
         poly.setColor(this.getColor());
 
+        poly.setSize(this.getWidth(), this.getHeight());
+
         polyBatch.begin();
         poly.draw(polyBatch);
         polyBatch.end();
 
     }
 
-
-//-----------------------------------------------------------------
-
+/*-----------------------------------------------------------------*/
 
     float convertToDegrees(float angleInRadians) {
         return angleInRadians * 57.2957795f;

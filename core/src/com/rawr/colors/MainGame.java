@@ -6,6 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.assets.AssetManager;
 public class MainGame extends Game {
 
     private static final int INITIAL_SPEED = 65;
+    private static final int TOTAL_SPINS = 1080;
     public final static float VIRTUAL_WIDTH = 1080;
     public final static float VIRTUAL_HEIGHT = 1920;
     public static int REAL_WIDTH;
@@ -22,6 +24,7 @@ public class MainGame extends Game {
 
     public AssetManager assetManager;
     public SpriteBatch batch;
+    public PolygonSpriteBatch pbatch;
     public BitmapFont font_text;
     public BitmapFont font_number;
     private Label.LabelStyle styleText;
@@ -31,17 +34,22 @@ public class MainGame extends Game {
     public static Preferences prefs;
 
     public GameState state;
+
+
     public enum GameState {
         MENU, TRANSITION, COUNT, GAME, OVER
     }
     private float speed = 0;
+    private float time = 0;
 
     public void create() {
         assetManager = new AssetManager();
         batch = new SpriteBatch();
+        pbatch = new PolygonSpriteBatch();
 
         setSpeed(INITIAL_SPEED);
         setPoints(0);
+        setTime(20);
 
         loadFonts();
         setLabelStyles();
@@ -61,14 +69,6 @@ public class MainGame extends Game {
 
     }
 
-    public float getSpeed(){
-        return speed;
-    }
-
-    public void setSpeed(Integer x){
-        speed = x;
-    }
-
     private void increaseSpeed(){
 
         speed = speed + (float)(Math.log(points*1.75)/Math.log(2));
@@ -79,16 +79,6 @@ public class MainGame extends Game {
         styleWhiteText = new Label.LabelStyle(font_text, Color.WHITE);
         styleNumber = new Label.LabelStyle(font_number, Color.DARK_GRAY);
     }
-
-    public Label.LabelStyle getStyleText(){
-        return styleText;
-    }
-
-    public Label.LabelStyle getStyleNumber() {
-        return styleNumber;
-    }
-
-    public Label.LabelStyle getStyleWhiteText() { return styleWhiteText; }
 
     private void loadFonts () {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ProximaNova-Light.ttf"));
@@ -110,17 +100,8 @@ public class MainGame extends Game {
         generator_2.dispose();
     }
 
-    // Receives an integer and maps it to the String highScore in prefs
-    public void setHighScore(int val) {
-        if(getHighScore() < val) {
-            prefs.putInteger("HighScore", val);
-            prefs.flush();
-        }
-    }
-
-    // Retrieves the current high score
-    public static int getHighScore() {
-        return prefs.getInteger("HighScore");
+    private void calcTime() {
+        time = TOTAL_SPINS/this.getSpeed();
     }
 
     public void render() {
@@ -133,6 +114,35 @@ public class MainGame extends Game {
         font_number.dispose();
     }
 
+    public void addPoints(Integer x) {
+        points = points + x;
+        increaseSpeed();
+        calcTime();
+    }
+
+    /* Gets & Sets */
+
+    // Retrieves the current high score
+    public static int getHighScore() {
+        return prefs.getInteger("HighScore");
+    }
+
+    // Receives an integer and maps it to the String highScore in prefs
+    public void setHighScore(int val) {
+        if(getHighScore() < val) {
+            prefs.putInteger("HighScore", val);
+            prefs.flush();
+        }
+    }
+
+    public float getSpeed(){
+        return speed;
+    }
+
+    public void setSpeed(Integer x){
+        speed = x;
+    }
+
     public Integer getPoints() {
         return points;
     }
@@ -142,11 +152,22 @@ public class MainGame extends Game {
         setSpeed(INITIAL_SPEED);
     }
 
-    public void addPoints(Integer x) {
-        points = points + x;
-        increaseSpeed();
+    public float getTime() {
+        return time;
     }
 
+    public void setTime(float time) {
+        this.time = time;
+    }
 
+    public Label.LabelStyle getStyleText(){
+        return styleText;
+    }
+
+    public Label.LabelStyle getStyleNumber() {
+        return styleNumber;
+    }
+
+    public Label.LabelStyle getStyleWhiteText() { return styleWhiteText; }
 
 }

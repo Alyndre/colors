@@ -2,10 +2,12 @@ package com.rawr.colors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -28,6 +30,7 @@ public class GameScreen implements Screen {
     private boolean isPressed = false;
     private float ratio = 0.0f;
     private float diff = 0.0f;
+    private float dura = 0;
 
     private OrthographicCamera camera;
     private Stage stage;
@@ -111,6 +114,7 @@ public class GameScreen implements Screen {
         camera.update();
 
         game.batch.setProjectionMatrix(camera.combined);
+        game.pbatch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
         if(game.state == MainGame.GameState.MENU) {
@@ -121,7 +125,6 @@ public class GameScreen implements Screen {
             }
         }
 
-
         if (game.state == MainGame.GameState.TRANSITION) {
             playText.act(delta);
             logo.rotateBy((360 - logo.getRotation()) * delta);
@@ -130,10 +133,10 @@ public class GameScreen implements Screen {
             }
             logo.clearListeners();
             addPointsText();
+            addTimeBar();
             addPointsNumber();
             changeScorePosition(game.state);
             addArrow();
-            addTimeBar();
             addBigButton();
             pointsText.act(delta);
             addGreyBackground();
@@ -155,8 +158,6 @@ public class GameScreen implements Screen {
             readyGo.setText("GO!");
             game.state = MainGame.GameState.GAME;
         }
-
-        stage.draw();
 
         if (game.state == MainGame.GameState.GAME) {
             removeReadyGo(delta);
@@ -181,8 +182,22 @@ public class GameScreen implements Screen {
                 isPressed = false;
             }
 
+            dura+= delta;
+            float percent = dura * 100 / game.getTime();
+            if (dura <= game.getTime()) {
+
+                if (percent > 66) timeBar.setColor(Color.RED);
+                else if (percent > 33) timeBar.setColor(Color.ORANGE);
+                else timeBar.setColor(Color.GREEN);
+
+                timeBar.setPercentage(percent);
+            } else
+            {
+                wrong();
+            }
         }
 
+        stage.draw();
         if (game.state == MainGame.GameState.OVER) {
 
             addHighscoreText();
@@ -237,6 +252,8 @@ public class GameScreen implements Screen {
         ok.addAction(Actions.fadeOut(0.5f));
         addOk();
         game.addPoints(1);
+        dura = 0;
+        timeBar.setPercentage(0);
         isPressed = true;
         setActual();
         newButtonColor();
@@ -244,7 +261,10 @@ public class GameScreen implements Screen {
 
     private void wrong(){
         game.state = MainGame.GameState.OVER;
+        dura = 0;
+        timeBar.setPercentage(0);
         removeArrow();
+        removeTimeBar();
         addKo();
     }
 
@@ -266,6 +286,24 @@ public class GameScreen implements Screen {
     }
 
     private void loadTimeBar(){
+        float x, y, w, h;
+
+        w = 560;
+        h = 560;
+
+        timeBar = new ProgressCircle(new TextureRegion(game.assetManager.get("white_timebar.png", Texture.class)), game.pbatch, w, h);
+        timeBar.setOrigin(timeBar.getWidth()/2, timeBar.getHeight()/2);
+
+        x = (MainGame.VIRTUAL_WIDTH-timeBar.getWidth())/2;
+        y = (MainGame.VIRTUAL_HEIGHT-timeBar.getHeight())/2;
+        if (isWidthExtended) {
+            x = x + (diff/ratio);
+        } else {
+            y = y + (diff/ratio);
+        }
+        timeBar.setPosition(x, y);
+        timeBar.setPercentage(0);
+        timeBar.setColor(Color.GREEN);
 
     }
 
@@ -405,6 +443,8 @@ public class GameScreen implements Screen {
         float x, y;
 
         logoTexture = game.assetManager.get("circle.png", Texture.class);
+        logoTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
         logoStyle = new ImageButton.ImageButtonStyle();
         logoStyle.up = new SpriteDrawable(new Sprite(logoTexture));
         logoStyle.down = new SpriteDrawable(new Sprite(logoTexture));
@@ -462,6 +502,8 @@ public class GameScreen implements Screen {
             float x, y;
 
             arrowTexture = game.assetManager.get("arrow.png", Texture.class);
+            arrowTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
             arrow = new Image(arrowTexture);
             arrow.setWidth(50);
             arrow.setHeight(50);
@@ -568,6 +610,7 @@ public class GameScreen implements Screen {
             float x, y;
 
             bigButtonTexture = game.assetManager.get("btn_" + actual + ".png");
+            bigButtonTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
             bigButtonStyle = new ImageButton.ImageButtonStyle();
             bigButtonStyle.up = new SpriteDrawable(new Sprite(bigButtonTexture));
