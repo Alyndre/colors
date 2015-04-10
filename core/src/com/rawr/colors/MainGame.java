@@ -71,7 +71,7 @@ public class MainGame extends Game {
 
     private void increaseSpeed(){
 
-        speed = speed + (float)(Math.log(points*1.75)/Math.log(2));
+        speed = speed + (float)(Math.log(points*3)/Math.log(2));
     }
 
     private void setLabelStyles() {

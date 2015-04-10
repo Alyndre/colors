@@ -2,6 +2,8 @@ package com.rawr.colors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -34,6 +36,10 @@ public class GameScreen implements Screen {
 
     private OrthographicCamera camera;
     private Stage stage;
+
+    private Sound correct;
+    private Sound wrong;
+    private Sound play;
 
     private ImageButton logo;
 
@@ -88,22 +94,7 @@ public class GameScreen implements Screen {
             diff = Math.abs(MainGame.REAL_HEIGHT-(MainGame.VIRTUAL_HEIGHT/ratio));
         }
 
-        loadPlayText();
-        loadLogo();
-        loadPointsText();
-        loadPointsNumber();
-        loadHighscoreText();
-        loadHighscoreNumber();
-        loadArrow();
-        loadSemiBackground();
-        loadReadyGo();
-        loadReloadButton();
-        setActual();
-        loadBigButton();
-        loadTimeBar();
-        loadOk();
-        loadKo();
-
+        loadAll();
     }
 
     @Override
@@ -127,7 +118,7 @@ public class GameScreen implements Screen {
 
         if (game.state == MainGame.GameState.TRANSITION) {
             playText.act(delta);
-            logo.rotateBy((360 - logo.getRotation()) * delta);
+            logo.rotateBy((360 - logo.getRotation()) * delta * 2.5f);
             if (logo.getRotation() > 360) {
                 logo.setRotation(logo.getRotation() - 360);
             }
@@ -229,6 +220,39 @@ public class GameScreen implements Screen {
         game.batch.end();
     }
 
+    private void loadAll(){
+        loadCorrectSound();
+        loadWrongSound();
+        loadPlaySound();
+        loadPlayText();
+        loadLogo();
+        loadPointsText();
+        loadPointsNumber();
+        loadHighscoreText();
+        loadHighscoreNumber();
+        loadArrow();
+        loadSemiBackground();
+        loadReadyGo();
+        loadReloadButton();
+        setActual();
+        loadBigButton();
+        loadTimeBar();
+        loadOk();
+        loadKo();
+    }
+
+    private void loadPlaySound(){
+        play = game.assetManager.get("sfx/play.ogg", Sound.class);
+    }
+
+    private void loadCorrectSound(){
+        correct = game.assetManager.get("sfx/correct.ogg", Sound.class);
+    }
+
+    private void loadWrongSound() {
+        wrong = game.assetManager.get("sfx/wrong.ogg", Sound.class);
+    }
+
     private void changeScorePosition(MainGame.GameState state){
         float w = MainGame.VIRTUAL_WIDTH;
         float h = MainGame.VIRTUAL_HEIGHT;
@@ -249,6 +273,7 @@ public class GameScreen implements Screen {
     }
 
     private void correct(){
+        correct.play(1);
         ok.addAction(Actions.fadeOut(0.5f));
         addOk();
         game.addPoints(1);
@@ -260,6 +285,7 @@ public class GameScreen implements Screen {
     }
 
     private void wrong(){
+        wrong.play(1);
         game.state = MainGame.GameState.OVER;
         dura = 0;
         timeBar.setPercentage(0);
@@ -269,7 +295,8 @@ public class GameScreen implements Screen {
     }
 
     private void newButtonColor(){
-        bigButtonTexture = game.assetManager.get("btn_" + actual + ".png", Texture.class);
+        bigButtonTexture = game.assetManager.get("img/btn_" + actual + ".png", Texture.class);
+        bigButtonTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         bigButtonStyle = new ImageButton.ImageButtonStyle();
         bigButtonStyle.up = new SpriteDrawable(new Sprite(bigButtonTexture));
@@ -291,7 +318,7 @@ public class GameScreen implements Screen {
         w = 560;
         h = 560;
 
-        timeBar = new ProgressCircle(new TextureRegion(game.assetManager.get("white_timebar.png", Texture.class)), game.pbatch, w, h);
+        timeBar = new ProgressCircle(new TextureRegion(game.assetManager.get("img/white_timebar.png", Texture.class)), game.pbatch, w, h);
         timeBar.setOrigin(timeBar.getWidth()/2, timeBar.getHeight()/2);
 
         x = (MainGame.VIRTUAL_WIDTH-timeBar.getWidth())/2;
@@ -335,7 +362,7 @@ public class GameScreen implements Screen {
         for (Action act : readyGo.getActions()){
             readyGo.removeAction(act);
         }
-        readyGo.addAction(Actions.fadeOut(0.75f));
+        readyGo.addAction(Actions.fadeOut(0.5f));
         stage.addActor(readyGo);
     }
 
@@ -346,8 +373,11 @@ public class GameScreen implements Screen {
     private void loadSemiBackground() {
 
         if (greybkgTexture == null){
-            greybkgTexture = game.assetManager.get("grayBackground.png", Texture.class);
+            greybkgTexture = game.assetManager.get("img/grayBackground.png", Texture.class);
         }
+
+        greybkgTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
         greybkg = new Image(greybkgTexture);
         greybkg.setWidth(1920);
         greybkg.setHeight(1920);
@@ -378,8 +408,11 @@ public class GameScreen implements Screen {
         float x, y;
 
         if (okTexture == null){
-            okTexture = game.assetManager.get("ok.png");
+            okTexture = game.assetManager.get("img/ok.png");
         }
+
+        okTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
         ok = new Image(okTexture);
         ok.setWidth(540);
         ok.setHeight(540);
@@ -403,8 +436,11 @@ public class GameScreen implements Screen {
         float x, y;
 
         if (koTexture == null){
-            koTexture = game.assetManager.get("ko.png");
+            koTexture = game.assetManager.get("img/ko.png");
         }
+
+        koTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
         ko = new Image(koTexture);
         ko.setWidth(540);
         ko.setHeight(540);
@@ -442,7 +478,7 @@ public class GameScreen implements Screen {
         ImageButton.ImageButtonStyle logoStyle;
         float x, y;
 
-        logoTexture = game.assetManager.get("circle.png", Texture.class);
+        logoTexture = game.assetManager.get("img/circle.png", Texture.class);
         logoTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         logoStyle = new ImageButton.ImageButtonStyle();
@@ -467,6 +503,7 @@ public class GameScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.state = MainGame.GameState.TRANSITION;
+                play.play(1);
             }
         });
         logo.setTransform(true);
@@ -501,7 +538,7 @@ public class GameScreen implements Screen {
 
             float x, y;
 
-            arrowTexture = game.assetManager.get("arrow.png", Texture.class);
+            arrowTexture = game.assetManager.get("img/arrow.png", Texture.class);
             arrowTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
             arrow = new Image(arrowTexture);
@@ -609,7 +646,7 @@ public class GameScreen implements Screen {
 
             float x, y;
 
-            bigButtonTexture = game.assetManager.get("btn_" + actual + ".png");
+            bigButtonTexture = game.assetManager.get("img/btn_" + actual + ".png");
             bigButtonTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
             bigButtonStyle = new ImageButton.ImageButtonStyle();
@@ -723,7 +760,8 @@ public class GameScreen implements Screen {
 
             float x, y;
 
-            reloadButtonTexture = game.assetManager.get("reload.png");
+            reloadButtonTexture = game.assetManager.get("img/reload.png");
+            reloadButtonTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
             reloadButtonStyle = new ImageButton.ImageButtonStyle();
             reloadButtonStyle.up = new SpriteDrawable(new Sprite(reloadButtonTexture));
@@ -745,6 +783,7 @@ public class GameScreen implements Screen {
             reloadButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
+                    play.play(1);
                     game.state = MainGame.GameState.TRANSITION;
                     setActual();
                     newButtonColor();

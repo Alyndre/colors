@@ -15,7 +15,7 @@ import com.rawr.colors.MainGame;
 
 public class AndroidLauncher extends AndroidApplication {
 
-    private static final String AD_UNIT_ID = "ca-app-pub-6916351754834612/3101802628";
+    private static final String AD_UNIT_ID = " ca-app-pub-2913036145912236/8677562500";
     private static final Boolean CHILD_TREATMENT = true;
     private static final String GOOGLE_PLAY_URL = "https://play.google.com/store/apps/developer?id=TheInvader360";
     protected AdView adView;
