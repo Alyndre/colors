@@ -15,7 +15,7 @@ import com.rawr.colors.MainGame;
 
 public class AndroidLauncher extends AndroidApplication {
 
-    private static final String AD_UNIT_ID = " ca-app-pub-2913036145912236/8677562500";
+    private static final String AD_UNIT_ID = "ca-app-pub-2913036145912236/8677562500";
     private static final Boolean CHILD_TREATMENT = true;
     private static final String GOOGLE_PLAY_URL = "https://play.google.com/store/apps/developer?id=TheInvader360";
     protected AdView adView;
@@ -44,7 +44,7 @@ public class AndroidLauncher extends AndroidApplication {
 
     private AdView createAdView() {
         adView = new AdView(this);
-        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(AD_UNIT_ID);
         adView.setId(R.id.adView); // this is an arbitrary id, allows for relative positioning in createGameView()
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -61,6 +61,7 @@ public class AndroidLauncher extends AndroidApplication {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+
         gameView.setLayoutParams(params);
         return gameView;
     }
